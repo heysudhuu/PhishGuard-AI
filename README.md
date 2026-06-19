@@ -169,27 +169,31 @@ Designed as a modern Security Operations Center (SOC) inspired dashboard, PhishG
 ```bash
 PhishGuard-AI/
 │
-├── static/
-│   ├── css/
-│   ├── js/
-│   ├── assets/
-│   └── screenshots/
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   ├── diagnostics.py
+│   ├── explainability.py
+│   ├── feature_extractor.py
+│   ├── ml_model.py
+│   ├── reputation.py
+│   ├── risk_engine.py
+│   ├── schemas.py
+│   ├── models.py
+│   ├── train_model.py
+│   │
+│   ├── static/
+│   │   ├── dashboard.html
+│   │   ├── dashboard.css
+│   │   └── dashboard.js
+│   │
+│   ├── model.joblib
+│   ├── features.joblib
+│   └── phishguard.db
 │
-├── templates/
-│   └── dashboard.html
-│
-├── models/
-│   └── phishing_model.pkl
-│
-├── datasets/
-│
-├── app.py
-├── requirements.txt
 ├── README.md
-│
-└── LICENSE
+└── requirements.txt
 ```
-
 ---
 
 # 🚀 Installation
