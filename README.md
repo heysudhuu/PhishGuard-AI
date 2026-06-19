@@ -34,7 +34,7 @@ Designed as a modern Security Operations Center (SOC) inspired dashboard, PhishG
 /assets/dashboard.png
 ```
 
-![Dashboard Preview](assets/dashboard.png)
+![Dashboard Preview](dashboard.png)
 
 ---
 
