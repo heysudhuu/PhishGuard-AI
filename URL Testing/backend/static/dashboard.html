@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard AI — Security Analytics Dashboard</title>
+    <meta name="description" content="Real-time browser threat protection stats and details.">
+    <!-- Global JS Error Overlay for Debugging -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errDiv = document.createElement("div");
+            errDiv.style.position = "fixed";
+            errDiv.style.top = "10px";
+            errDiv.style.left = "10px";
+            errDiv.style.right = "10px";
+            errDiv.style.background = "#ff2a2a";
+            errDiv.style.color = "white";
+            errDiv.style.padding = "15px";
+            errDiv.style.borderRadius = "8px";
+            errDiv.style.zIndex = "2147483647";
+            errDiv.style.fontFamily = "monospace";
+            errDiv.style.fontSize = "13px";
+            errDiv.style.boxShadow = "0 4px 20px rgba(255, 42, 42, 0.4)";
+            errDiv.innerHTML = `<strong>PhishGuard JS Error Detected:</strong> ${message} <br><small>at ${source}:${lineno}:${colno}</small>`;
+            document.body.appendChild(errDiv);
+            return false;
+        };
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="dashboard.css?v=1.0.4">
+</head>
+
+<body>
+    <canvas id="cyber-matrix-bg"></canvas>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved brand-icon"></i>
+                <div class="brand-text">
+                    <h1>PhishGuard <span class="accent-color">AI</span></h1>
+                    <span class="brand-sub">Browser Threat Intelligence</span>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="#overview" class="nav-item active" id="btn-overview">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#map" class="nav-item" id="btn-map">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <span>Threat Map</span>
+                </a>
+                <a href="#history" class="nav-item" id="btn-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Scan History</span>
+                </a>
+                <a href="#rules" class="nav-item" id="btn-rules">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Access Rules</span>
+                </a>
+                <a href="#hygiene" class="nav-item" id="btn-hygiene">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Cyber Hygiene</span>
+                </a>
+                <a href="#community" class="nav-item" id="btn-community">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Community Feed</span>
+                </a>
+                <a href="#diagnostics" class="nav-item" id="btn-diagnostics">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span>Diagnostics lookup</span>
+                </a>
+                <a href="#defender" class="nav-item" id="btn-defender">
+                    <i class="fa-solid fa-spider"></i>
+                    <span>Brand Defender</span>
+                </a>
+                <a href="#game" class="nav-item" id="btn-game">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>Spot-the-Phish</span>
+                </a>
+                <a href="#breach" class="nav-item" id="btn-breach">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <span>Leak Scanner</span>
+                </a>
+                <a href="#settings" class="nav-item" id="btn-settings">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="dot pulse-green"></span>
+                    <span>Threat Engine Active</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h2>Threat Analytics Dashboard</h2>
+                    <p class="current-date" id="date-display">June 16, 2026</p>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
+                    <button class="btn btn-secondary" id="btn-export-csv" title="Export scan records to CSV" style="display: none;">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span>Export Logs</span>
+                    </button>
+                    <button class="btn btn-refresh" id="refresh-dashboard">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>Sync Feeds</span>
+                    </button>
+                    <button class="btn btn-wipe" id="btn-wipe-history" title="Clear all history and stats">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Wipe History</span>
+                    </button>
+                    
+                    
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- Overview Section -->
+                <section id="overview-section" class="dashboard-section active">
+                    <!-- Manual Scan Card -->
+                    <div class="glass-panel scan-card" style="margin-bottom: 30px; padding: 24px;">
+                        <div class="scan-header">
+                            <h3><i class="fa-solid fa-magnifying-glass-chart header-icon"></i> Quick URL Threat Scanner
+                            </h3>
+                            <p class="text-muted" style="font-size: 13px; margin-top: 4px;">Paste any website link below
+                                to evaluate security risk in real-time using ML classification and threat intelligence
+                                feeds.</p>
+                        </div>
+                        <div class="scan-form-group" style="display: flex; gap: 12px; margin-top: 20px;">
+                            <input type="url" id="manual-scan-input" placeholder="Paste URL here (e.g., http://paypal-security-login-update.xyz.example.com)..."
+                                style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: var(--text-main); font-family: inherit; font-size: 14px; outline: none; transition: var(--transition);">
+                            <button class="btn btn-refresh" id="btn-manual-scan"
+                                style="padding: 12px 24px; font-weight: 700;">Analyze Link</button>
+                        </div>
+                        <!-- Manual Scan Result Placeholder -->
+                        <div id="manual-scan-result" class="scan-result-panel" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); animation: fadeIn 0.3s ease-out;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper blue">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-label">Total Sites Scanned</span>
+                                <h3 class="stat-value" id="stat-total">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper green">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-label">Safe Domains</span>
+                                <h3 class="stat-value text-green" id="stat-safe">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper orange">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-label">Suspicious Alerts</span>
+                                <h3 class="stat-value text-orange" id="stat-suspicious">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper red">
+                                <i class="fa-solid fa-hand-holding-hand"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-label">Phishing Blocked</span>
+                                <h3 class="stat-value text-red" id="stat-blocked">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-wrapper purple">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-label">Avg Risk Score</span>
+                                <h3 class="stat-value" id="stat-avg-risk">0%</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Console Grid -->
+                    <div class="charts-grid" style="margin-bottom: 24px;">
+                        <div class="chart-card glass-panel">
+                            <h3><i class="fa-solid fa-chart-line header-icon"></i>Threat Trends (Last 7 Days)</h3>
+                            <div class="chart-container" style="height: 260px;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card glass-panel">
+                            <h3><i class="fa-solid fa-terminal header-icon"></i>Live Intel Feed Console</h3>
+                            <div class="console-box" id="threat-console" style="background: #05070a; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; height: 260px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.6; color: #34d399;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Insights Grid -->
+                    <div class="charts-grid" style="margin-bottom: 30px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                        <div class="chart-card glass-panel">
+                            <h3><i class="fa-solid fa-chart-pie header-icon"></i>Risk Distribution</h3>
+                            <div class="chart-container" style="height: 220px;">
+                                <canvas id="distributionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card glass-panel">
+                            <h3><i class="fa-solid fa-circle-nodes header-icon"></i>Top Threat Vectors</h3>
+                            <div class="chart-container" style="height: 220px;">
+                                <canvas id="threatsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card glass-panel">
+                            <h3><i class="fa-solid fa-brain header-icon" style="color: #8b5cf6;"></i>ML Engine Weights</h3>
+                            <div class="ml-weights-container" style="display: flex; flex-direction: column; gap: 10px; padding: 5px 0;">
+                                <div class="weight-item">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                        <span>Special Characters Count</span>
+                                        <span style="font-weight: 700; color: #8b5cf6;">30.5%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #121824; border-radius: 4px; overflow: hidden;"><div style="width: 30.5%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div></div>
+                                </div>
+                                <div class="weight-item">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                        <span>URL String Length</span>
+                                        <span style="font-weight: 700; color: #8b5cf6;">26.9%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #121824; border-radius: 4px; overflow: hidden;"><div style="width: 26.9%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div></div>
+                                </div>
+                                <div class="weight-item">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                        <span>Deceptive Keywords Match</span>
+                                        <span style="font-weight: 700; color: #8b5cf6;">17.0%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #121824; border-radius: 4px; overflow: hidden;"><div style="width: 17%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div></div>
+                                </div>
+                                <div class="weight-item">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                        <span>Subdomains Count</span>
+                                        <span style="font-weight: 700; color: #8b5cf6;">10.7%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #121824; border-radius: 4px; overflow: hidden;"><div style="width: 10.7%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div></div>
+                                </div>
+                                <div class="weight-item">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                                        <span>Brand Impersonation Cues</span>
+                                        <span style="font-weight: 700; color: #8b5cf6;">6.5%</span>
+                                    </div>
+                                    <div style="height: 6px; background: #121824; border-radius: 4px; overflow: hidden;"><div style="width: 6.5%; height: 100%; background: #8b5cf6; border-radius: 4px;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Section -->
+                <section id="history-section" class="dashboard-section">
+                    <div class="glass-panel history-panel">
+                        <div class="panel-header">
+                            <div class="panel-title-group">
+                                <h3><i class="fa-solid fa-list-check header-icon"></i>Scan Records</h3>
+                                <p>Detailed history of domains scanned by PhishGuard AI</p>
+                            </div>
+                            <div class="panel-filters">
+                                <div class="search-wrapper">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="search-input" placeholder="Filter by domain or URL...">
+                                </div>
+                                <select id="filter-risk" class="select-filter">
+                                    <option value="all">All Risk Levels</option>
+                                    <option value="safe">Safe Only</option>
+                                    <option value="suspicious">Suspicious Only</option>
+                                    <option value="dangerous">Dangerous Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="position: relative; min-height: 280px;">
+                            <div class="table-container">
+                                <table class="history-table" id="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Domain</th>
+                                            <th>Risk Score</th>
+                                            <th>Status</th>
+                                            <th>Threat Findings</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="history-tbody">
+                                        <!-- Populated dynamically -->
+                                        <tr class="empty-row">
+                                            <td colspan="6">
+                                                <div class="empty-state">
+                                                    <i class="fa-solid fa-folder-open"></i>
+                                                    <p>No scans recorded yet. Install and browse using the Chrome extension.
+                                                    </p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Access Rules Section -->
+                <section id="rules-section" class="dashboard-section">
+                    <div class="rules-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+                        <!-- Whitelisted domains panel -->
+                        <div class="glass-panel rules-panel">
+                            <div class="panel-header">
+                                <div class="panel-title-group">
+                                    <h3><i class="fa-solid fa-circle-check text-green header-icon"></i>Trusted Sites (Whitelist)</h3>
+                                    <p>Scan checks will be bypassed. Marked as 0% safe.</p>
+                                </div>
+                            </div>
+                            <div class="form-row" style="display: flex; gap: 12px; margin-top: 15px; margin-bottom: 20px;">
+                                <input type="text" id="whitelist-input" placeholder="Enter trusted domain (e.g., google.com)..." 
+                                    style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main); font-family: inherit; font-size: 13px; outline: none;">
+                                <button class="btn btn-refresh" id="btn-add-whitelist" style="padding: 10px 18px; font-size: 13px;">Add Domain</button>
+                            </div>
+                            <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Added</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="whitelist-tbody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Blacklisted domains panel -->
+                        <div class="glass-panel rules-panel">
+                            <div class="panel-header">
+                                <div class="panel-title-group">
+                                    <h3><i class="fa-solid fa-circle-xmark text-red header-icon"></i>Blocked Sites (Blacklist)</h3>
+                                    <p>Instantly classified as dangerous. Bypasses normal scans.</p>
+                                </div>
+                            </div>
+                            <div class="form-row" style="display: flex; gap: 12px; margin-top: 15px; margin-bottom: 20px;">
+                                <input type="text" id="blacklist-input" placeholder="Enter blocked domain (e.g., evil-phish.net)..." 
+                                    style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main); font-family: inherit; font-size: 13px; outline: none;">
+                                <button class="btn btn-wipe" id="btn-add-blacklist" style="padding: 10px 18px; font-size: 13px; border: 1px solid var(--danger);">Block Domain</button>
+                            </div>
+                            <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Added</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="blacklist-tbody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Community Feed Section -->
+                <section id="community-section" class="dashboard-section">
+                    <div class="community-grid" style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start;">
+                        <!-- Timeline Feed -->
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <div class="panel-title-group">
+                                    <h3><i class="fa-solid fa-bullhorn header-icon" style="color: #60a5fa;"></i>Crowdsourced Threat Timeline</h3>
+                                    <p>Real-time threat alerts submitted by PhishGuard community members</p>
+                                </div>
+                            </div>
+                            <div id="community-feed-container" style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px; min-height: 250px;">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Report Form -->
+                        <div class="glass-panel" style="padding: 20px;">
+                            <h3><i class="fa-solid fa-flag header-icon" style="color: var(--danger)"></i>Report a Threat</h3>
+                            <p class="text-muted" style="font-size: 12px; margin-top: 4px; margin-bottom: 15px;">Have you spotted a deceptive link? Submit it to help secure other users.</p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block;">Deceptive Link (URL)</label>
+                                    <input type="url" id="report-url-input" placeholder="http://chase-security-update.xyz..." 
+                                        style="width: 100%; background: #121824; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: var(--text-main); font-family: inherit; font-size: 13px; outline: none;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block;">Description of Deception</label>
+                                    <textarea id="report-desc-input" placeholder="Impersonating PayPal login form with a fake verification badge..." rows="4"
+                                        style="width: 100%; background: #121824; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: var(--text-main); font-family: inherit; font-size: 13px; outline: none; resize: vertical;"></textarea>
+                                </div>
+                                <button class="btn btn-refresh" id="btn-submit-report" style="width: 100%; padding: 10px; font-weight: 700; margin-top: 8px;">File Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Security Diagnostics Section -->
+                <section id="diagnostics-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px;">
+                        <h3><i class="fa-solid fa-magnifying-glass-location header-icon" style="color: #60a5fa;"></i>Interactive Security Report Card</h3>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 4px;">Run deep socket handshakes, RDAP registry lookup, and GeoIP provider queries on any domain.</p>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 20px; margin-bottom: 24px;">
+                            <input type="text" id="diagnostics-domain-input" placeholder="Enter domain name (e.g., netflix.com, secure-login.top)..." 
+                                style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: var(--text-main); font-family: inherit; font-size: 14px; outline: none;">
+                            <button class="btn btn-refresh" id="btn-run-diagnostics" style="padding: 12px 24px; font-weight: 700;">Query Diagnostics</button>
+                        </div>
+
+                        <!-- Report Card results -->
+                        <div id="diagnostics-result" style="display: none; border-top: 1px solid var(--border-color); padding-top: 24px; animation: fadeIn 0.3s ease-out;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Brand Defender Section -->
+                <section id="defender-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px;">
+                        <h3><i class="fa-solid fa-shield-virus header-icon" style="color: #8b5cf6;"></i>Brand Typo-Squatting Defender</h3>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 4px;">Type in your brand/company domain to check for homoglyphs, deceptive subdomains, or registration spoof variants active online.</p>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 20px; margin-bottom: 24px;">
+                            <input type="text" id="defender-domain-input" placeholder="Enter your official domain (e.g., bankofamerica.com)..." 
+                                style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: var(--text-main); font-family: inherit; font-size: 14px; outline: none;">
+                            <button class="btn btn-refresh" id="btn-run-defender" style="padding: 12px 24px; font-weight: 700;">Scan Spoof Domains</button>
+                        </div>
+
+                        <!-- Typo-squat list -->
+                        <div id="defender-result" style="display: none; border-top: 1px solid var(--border-color); padding-top: 20px; animation: fadeIn 0.3s ease-out;">
+                            <h4 style="margin-bottom: 15px; font-size: 15px;">Generated Spoof Variants & Active Status</h4>
+                            <div class="table-container">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Deceptive Variant</th>
+                                            <th>Spoof Category</th>
+                                            <th>Status</th>
+                                            <th>Resolved IP</th>
+                                            <th>Action Policy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="defender-tbody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Threat Map Section -->
+                <section id="map-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px; position: relative;">
+                        <h3><i class="fa-solid fa-earth-americas header-icon" style="color: #60a5fa;"></i>Interactive Threat Telemetry Map</h3>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 4px; margin-bottom: 20px;">Real-time global mapping of servers hosting deceptive links and identified phishing vectors.</p>
+                        
+                        <div class="map-layout" style="display: grid; grid-template-columns: 1fr 280px; gap: 24px; min-height: 400px; align-items: start;">
+                            <!-- Canvas map -->
+                            <div id="map-canvas-wrapper" style="position: relative; background: #030508; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; height: 400px; width: 100%;">
+                                <canvas id="world-map-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                            </div>
+                            <!-- Side metadata stats -->
+                            <div class="glass-panel" style="padding: 16px; background: rgba(8, 14, 20, 0.4); border: 1px solid var(--border-color); height: 400px; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px;">Map Telemetry</h4>
+                                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span>Active Beacons:</span>
+                                            <span style="font-weight: 700; color: var(--danger);" id="map-beacons-count">0</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span>Primary Target Area:</span>
+                                            <span style="font-weight: 700; color: #60a5fa;" id="map-top-location">N/A</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="flex-grow: 1; margin-top: 15px; overflow-y: auto; font-family: monospace; font-size: 10px; color: #10b981; line-height: 1.4;" id="map-telemetry-log">
+                                    [SYS] Map loaded. Waiting for threat nodes...
+                                </div>
+                                <button class="btn btn-refresh" id="btn-refresh-map" style="font-size: 11px; padding: 6px 12px; margin-top: 10px;">Refresh Nodes</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cyber Hygiene Section -->
+                <section id="hygiene-section" class="dashboard-section">
+                    <div class="hygiene-grid" style="display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start;">
+                        <!-- Left score card -->
+                        <div class="glass-panel" style="padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                            <h4 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 15px;">Safety Audit Score</h4>
+                            <div class="grade-circle grade-A" id="hygiene-grade-circle" style="width: 140px; height: 140px; border-radius: 50%; font-size: 56px;">A+</div>
+                            <h3 id="hygiene-score-percentage" style="font-size: 24px; font-weight: 800; margin-top: 15px; color: var(--primary);">100%</h3>
+                            <span class="badge safe" id="hygiene-status-badge" style="font-size: 11px; margin-top: 6px; padding: 4px 12px;">Secure Browser</span>
+                        </div>
+
+                        <!-- Right details panel -->
+                        <div class="glass-panel" style="padding: 24px;">
+                            <h3><i class="fa-solid fa-heart-pulse header-icon" style="color: var(--primary)"></i>Cyber Safety Audit Reports</h3>
+                            <p class="text-muted" style="font-size: 13px; margin-top: 4px; margin-bottom: 20px;">A personalized security assessment compiled from your browser threat detection logs.</p>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                                <div class="info-item-card">
+                                    <span class="info-item-label">HTTPS Security Ratio</span>
+                                    <div class="info-item-value" id="hygiene-https-ratio">100% Secure</div>
+                                </div>
+                                <div class="info-item-card">
+                                    <span class="info-item-label">Avoided Threats</span>
+                                    <div class="info-item-value text-red" id="hygiene-avoided-count">0 Blocked</div>
+                                </div>
+                                <div class="info-item-card">
+                                    <span class="info-item-label">Safety Rules Active</span>
+                                    <div class="info-item-value text-green" id="hygiene-rules-active">0 Enabled</div>
+                                </div>
+                            </div>
+
+                            <h4><i class="fa-solid fa-lightbulb text-orange"></i> Actionable Safety Tips</h4>
+                            <div id="hygiene-tips" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Spot-the-Phish Game Section -->
+                <section id="game-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px; max-width: 800px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                            <div>
+                                <h3><i class="fa-solid fa-gamepad header-icon" style="color: #60a5fa;"></i>Spot-the-Phish Quiz</h3>
+                                <p class="text-muted" style="font-size: 13px; margin-top: 2px;">Test your knowledge in identifying homoglyphs, brand spoofing, and malicious URLs.</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 12px; color: var(--text-muted); display: block;">Score</span>
+                                <span style="font-size: 18px; font-weight: 800; color: var(--primary);" id="game-score-display">Round 1/5</span>
+                            </div>
+                        </div>
+
+                        <!-- Game Card Area -->
+                        <div id="game-card" style="background: #090e15; border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; position: relative;">
+                            <!-- Active Question state -->
+                            <div id="game-question-block">
+                                <h4 style="font-size: 16px; margin-bottom: 10px;" id="game-question-title">Impersonating Bank Accounts</h4>
+                                <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-main);">An email sends you to the following link to review a notification. Is this URL safe or phishing?</p>
+                                
+                                <div class="report-url-block" id="game-url-display" style="font-size: 16px; font-family: monospace; text-align: center; padding: 16px; margin-bottom: 30px; letter-spacing: 0.5px; border-color: rgba(96, 165, 250, 0.2); background: rgba(96, 165, 250, 0.02); color: #60a5fa;">
+                                    http://chase-security-login-update.com/signin
+                                </div>
+                                
+                                <div style="display: flex; gap: 16px;">
+                                    <button class="btn btn-refresh game-choice-btn" data-choice="safe" style="flex: 1; padding: 14px; font-weight: 700; font-size: 14px;">✅ Safe Legitimate URL</button>
+                                    <button class="btn btn-wipe game-choice-btn" data-choice="phish" style="flex: 1; padding: 14px; font-weight: 700; font-size: 14px; border: 1px solid var(--danger);">❌ Phishing Attempt</button>
+                                </div>
+                            </div>
+
+                            <!-- Explanations/Feedback Block -->
+                            <div id="game-feedback-block" style="display: none; animation: fadeIn 0.3s;">
+                                <div id="game-feedback-banner" style="padding: 12px; border-radius: 6px; font-weight: 700; font-size: 14px; margin-bottom: 16px; text-align: center;">
+                                    CORRECT!
+                                </div>
+                                <p style="font-size: 14px; line-height: 1.5; color: var(--text-main); margin-bottom: 24px;" id="game-feedback-explanation">
+                                    Explanation goes here...
+                                </p>
+                                <div style="display: flex; justify-content: flex-end;">
+                                    <button class="btn btn-refresh" id="btn-game-next" style="padding: 10px 24px; font-weight: 700;">Continue Quiz</button>
+                                </div>
+                            </div>
+
+                            <!-- Final Results Block -->
+                            <div id="game-result-block" style="display: none; text-align: center; animation: fadeIn 0.3s;">
+                                <span style="font-size: 50px; display: block; margin-bottom: 10px;">🏆</span>
+                                <h3 style="font-size: 22px; font-weight: 700;">Quiz Completed!</h3>
+                                <p style="font-size: 14px; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px;">You correctly spotted <strong id="game-final-correct" style="color: var(--primary);">0</strong> out of <strong>5</strong> threats.</p>
+                                
+                                <div class="report-url-block" style="margin-bottom: 30px; font-size: 14px; padding: 12px; background: rgba(0,255,102,0.01);" id="game-final-badge">
+                                    Awarded: Security Novice Grade
+                                </div>
+                                
+                                <button class="btn btn-refresh" id="btn-game-restart" style="padding: 10px 24px; font-weight: 700;">Restart Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Leak Scanner Section -->
+                <section id="breach-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px;">
+                        <h3><i class="fa-solid fa-envelope-open-text header-icon" style="color: #ef4444;"></i>Credential Leak & Data Breach Scanner</h3>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 4px;">Search if your email addresses or password credentials have been leaked in historical data breaches globally.</p>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 20px; margin-bottom: 24px;">
+                            <input type="email" id="breach-email-input" placeholder="Enter your email address (e.g. admin@example.com, safe-user@gmail.com)..." 
+                                style="flex-grow: 1; background: #121824; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: var(--text-main); font-family: inherit; font-size: 14px; outline: none;">
+                            <button class="btn btn-refresh" id="btn-run-breach" style="padding: 12px 24px; font-weight: 700; background: #ef4444; border-color: #ef4444;">Check Leaks</button>
+                        </div>
+
+                        <!-- Search results -->
+                        <div id="breach-result" style="display: none; border-top: 1px solid var(--border-color); padding-top: 20px; animation: fadeIn 0.3s ease-out;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="dashboard-section">
+                    <div class="glass-panel" style="padding: 24px; max-width: 700px;">
+                        <h3><i class="fa-solid fa-sliders header-icon" style="color: #60a5fa;"></i>Browser Shield Configuration</h3>
+                        <p class="text-muted" style="font-size: 13px; margin-top: 4px; margin-bottom: 24px;">Adjust protection levels and scanning strictness enforced in your browser.</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <!-- Balanced Profile -->
+                            <label class="setting-profile-card" style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(255,255,255,0.01); cursor: pointer; transition: var(--transition);">
+                                <input type="radio" name="protection-profile" value="balanced" checked style="margin-top: 4px;">
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 700; color: #60a5fa;">Balanced Mode (Recommended)</h4>
+                                    <p class="text-muted" style="font-size: 12px; margin-top: 2px;">Standard ML model + reputation databases checks. Full warnings block verified threats only.</p>
+                                </div>
+                            </label>
+
+                            <!-- Strict Profile -->
+                            <label class="setting-profile-card" style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(255,255,255,0.01); cursor: pointer; transition: var(--transition);">
+                                <input type="radio" name="protection-profile" value="strict" style="margin-top: 4px;">
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 700; color: var(--warning);">Paranoid Mode (Strict)</h4>
+                                    <p class="text-muted" style="font-size: 12px; margin-top: 2px;">Aggressive heuristic policies. Blocks any website with a risk score above 30% or containing brand mismatches instantly.</p>
+                                </div>
+                            </label>
+
+                            <!-- Developer Profile -->
+                            <label class="setting-profile-card" style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(255,255,255,0.01); cursor: pointer; transition: var(--transition);">
+                                <input type="radio" name="protection-profile" value="developer" style="margin-top: 4px;">
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 700; color: var(--text-muted);">Developer Mode</h4>
+                                    <p class="text-muted" style="font-size: 12px; margin-top: 2px;">Bypasses all full-page blocking overlays. Threat warnings are recorded quietly in background logs and console flags only.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+                            <button class="btn btn-refresh" id="btn-save-settings" style="padding: 10px 24px; font-weight: 700;">Save Configuration</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Scan Details -->
+    <div class="modal-overlay" id="scan-modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-shield-halved text-blue"></i> Scan Detailed Report</h3>
+                <button class="modal-close" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modal-details-content">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Custom JS -->
+    <script src="dashboard.js?v=1.0.4"></script>
+</body>
+
+</html>

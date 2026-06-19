@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard AI — Extension Info</title>
+    <!-- Outfit Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="popup-container">
+        <!-- Header -->
+        <header class="popup-header">
+            <div class="brand-group">
+                <span class="shield-logo">🔐</span>
+                <div>
+                    <h2>PhishGuard <span class="primary-text">AI</span></h2>
+                    <span class="subtext">Active Browser Guard</span>
+                </div>
+            </div>
+            <button class="settings-btn" id="open-dashboard" title="View Dashboard">📊</button>
+        </header>
+
+        <!-- Main Score -->
+        <div class="gauge-section">
+            <div class="gauge-outer">
+                <div class="gauge-inner">
+                    <span class="score-number" id="risk-score">0%</span>
+                    <span class="score-label">RISK LEVEL</span>
+                </div>
+            </div>
+            <div class="risk-badge" id="risk-level-badge">Analyzing...</div>
+            <div class="domain-text" id="domain-display">domain.com</div>
+        </div>
+
+        <!-- Explanation Bullet Points -->
+        <div class="explanation-section">
+            <h3>Threat Findings</h3>
+            <div class="explanations-list" id="explanations-container">
+                <div class="loading-spinner">Analyzing security indicators...</div>
+            </div>
+        </div>
+
+        <!-- Actions Footer -->
+        <footer class="popup-footer" style="flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="btn-whitelist">Trust Domain</button>
+            <button class="btn btn-secondary" id="btn-report" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.2); color: #ef4444;">Report Threat</button>
+            <button class="btn btn-primary" id="btn-dashboard">Full Analytics</button>
+        </footer>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
