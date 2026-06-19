@@ -1,148 +1,170 @@
+<div align="center">
+
 # 🛡️ PhishGuard AI
 
-<p align="center">
-  <img src="">
-  <img src="">
-  <img src="">
-</p>
+### AI-Powered Phishing Detection & Browser Threat Intelligence Platform
 
-<h1 align="center">PhishGuard AI</h1>
+Detect malicious websites, analyze suspicious URLs, and provide real-time cyber threat intelligence using Machine Learning and Security Analytics.
 
-<p align="center">
-AI-Powered Browser Threat Intelligence & Phishing Detection Platform
-</p>
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
+![Flask](https://img.shields.io/badge/Flask-Backend-black?style=for-the-badge&logo=flask)
+![Machine Learning](https://img.shields.io/badge/Machine-Learning-green?style=for-the-badge)
+![Cybersecurity](https://img.shields.io/badge/Cybersecurity-Project-red?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
----
-
-## 🚀 Overview
-
-PhishGuard AI is an intelligent cybersecurity platform designed to detect phishing websites, analyze suspicious URLs, and provide real-time threat intelligence.
-
-The system combines Machine Learning, URL Reputation Analysis, Threat Intelligence Feeds, and Security Heuristics to identify potentially malicious websites before users become victims of cyberattacks.
+</div>
 
 ---
 
-## 📸 Dashboard Preview
+## 📌 Overview
 
-![Dashboard](assets/dashboard.png)
+PhishGuard AI is an intelligent cybersecurity platform developed to combat phishing attacks and malicious websites through automated threat detection.
 
----
+The platform leverages machine learning algorithms, URL intelligence analysis, reputation-based detection, and threat monitoring techniques to evaluate website security risks and provide actionable insights to users.
 
-## ✨ Features
-
-### 🔍 Smart URL Threat Scanner
-- Real-time URL analysis
-- Phishing detection engine
-- Domain reputation lookup
-- Suspicious pattern detection
-- Risk score generation
-
-### 📊 Threat Analytics Dashboard
-- Live threat monitoring
-- Risk trend visualization
-- Scan statistics
-- Security analytics
-
-### 🚨 Live Threat Intelligence Feed
-- Real-time security logs
-- Threat alerts
-- Security event monitoring
-- Threat feed synchronization
-
-### 🌍 Threat Map
-- Global threat visualization
-- Geographic attack tracking
-- Security intelligence monitoring
-
-### 🛡️ Brand Defender
-- Fake website detection
-- Brand impersonation monitoring
-- Typosquatting identification
-
-### 🔐 Leak Scanner
-- Credential exposure checks
-- Data breach monitoring
-- Security recommendations
-
-### 👥 Community Feed
-- Cybersecurity awareness
-- Community threat reports
-- Security updates
+Designed as a modern Security Operations Center (SOC) inspired dashboard, PhishGuard AI enables proactive threat hunting and cybersecurity awareness.
 
 ---
 
-## 🏗️ System Architecture
+## 🖼️ Dashboard Preview
 
-```text
-User URL Input
-      │
-      ▼
-Feature Extraction
-      │
-      ▼
-Machine Learning Model
-      │
-      ▼
-Threat Intelligence APIs
-      │
-      ▼
-Risk Score Engine
-      │
-      ▼
-Threat Analytics Dashboard
+> Replace the image path with your actual screenshot.
+
+```html
+/assets/dashboard.png
 ```
 
-## 🛠️ Tech Stack
+![Dashboard Preview](assets/dashboard.png)
+
+---
+
+# ✨ Core Features
+
+## 🔍 Intelligent URL Scanner
+
+- Real-time URL security analysis
+- Phishing website detection
+- Suspicious domain identification
+- URL structure inspection
+- Automated risk assessment
+
+---
+
+## 📊 Threat Analytics Dashboard
+
+- Security metrics visualization
+- Scan history monitoring
+- Threat trend analysis
+- Risk score calculation
+- Detection statistics
+
+---
+
+## 🚨 Live Threat Intelligence Feed
+
+- Real-time security events
+- Threat notifications
+- Intelligence feed synchronization
+- Security log monitoring
+- Alert generation
+
+---
+
+## 🛡️ Brand Defender
+
+- Brand impersonation detection
+- Typosquatting analysis
+- Fake login page identification
+- Domain similarity checks
+
+---
+
+## 🔐 Leak Scanner
+
+- Credential exposure monitoring
+- Public breach intelligence
+- Data leak detection
+- Security recommendations
+
+---
+
+## 🌍 Threat Intelligence Mapping
+
+- Global threat visualization
+- Attack source tracking
+- Geographical threat insights
+
+---
+
+# 🏗️ Architecture
+
+```text
+┌─────────────────────┐
+│ User Submitted URL  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Feature Extraction  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Machine Learning    │
+│ Classification      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Threat Intelligence │
+│ Verification        │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Risk Assessment     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Dashboard Results   │
+└─────────────────────┘
+```
+
+---
+
+# 🛠️ Technology Stack
 
 ### Frontend
+
 - HTML5
 - CSS3
-- JavaScript
+- JavaScript (ES6+)
 - Bootstrap
 - Chart.js
 
 ### Backend
+
 - Python
 - Flask
 
 ### Machine Learning
+
 - Scikit-Learn
-- Random Forest
+- Random Forest Classifier
 - Pandas
 - NumPy
 
-### Security APIs
-- VirusTotal API
+### Security Intelligence
+
+- WHOIS Analysis
+- VirusTotal Integration
 - Google Safe Browsing
-- WHOIS Lookup
-- Shodan API
+- Shodan Intelligence
 
 ---
 
-## 📈 Key Features
-
-| Feature | Description |
-|----------|------------|
-| URL Scanner | Analyze suspicious websites |
-| Risk Score | Calculate website security rating |
-| Threat Dashboard | Monitor security metrics |
-| Threat Feed | Real-time security logs |
-| Brand Defender | Detect fake websites |
-| Leak Scanner | Identify exposed credentials |
-
----
-
-## 🎯 Project Objectives
-
-- Detect phishing websites with high accuracy.
-- Protect users from online scams.
-- Provide real-time threat intelligence.
-- Improve cybersecurity awareness.
-- Deliver actionable security insights.
-
----
-
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```bash
 PhishGuard-AI/
@@ -150,7 +172,8 @@ PhishGuard-AI/
 ├── static/
 │   ├── css/
 │   ├── js/
-│   └── images/
+│   ├── assets/
+│   └── screenshots/
 │
 ├── templates/
 │   └── dashboard.html
@@ -162,12 +185,14 @@ PhishGuard-AI/
 │
 ├── app.py
 ├── requirements.txt
-└── README.md
+├── README.md
+│
+└── LICENSE
 ```
 
 ---
 
-## ⚙️ Installation
+# 🚀 Installation
 
 ### Clone Repository
 
@@ -175,7 +200,7 @@ PhishGuard-AI/
 git clone https://github.com/heysudhuu/PhishGuard-AI.git
 ```
 
-### Navigate to Project
+### Move Into Project Directory
 
 ```bash
 cd PhishGuard-AI
@@ -187,60 +212,104 @@ cd PhishGuard-AI
 pip install -r requirements.txt
 ```
 
-### Run Application
+### Start Application
 
 ```bash
 python app.py
 ```
 
+### Open Browser
+
+```text
+http://127.0.0.1:5000
+```
+
 ---
 
-## 🔮 Future Enhancements
+# 📈 Key Security Metrics
 
-- Browser Extension
-- AI Security Assistant
+| Metric | Description |
+|----------|------------|
+| Risk Score | Overall website threat level |
+| Safe Domains | Verified legitimate websites |
+| Suspicious Alerts | Potential security concerns |
+| Phishing Blocked | Detected malicious URLs |
+| Threat Trends | Historical threat data |
+
+---
+
+# 🎯 Project Objectives
+
+- Detect phishing websites accurately.
+- Enhance cybersecurity awareness.
+- Provide actionable threat intelligence.
+- Reduce successful phishing attacks.
+- Simulate enterprise security monitoring workflows.
+- Demonstrate practical machine learning in cybersecurity.
+
+---
+
+# 🔮 Future Roadmap
+
+- Browser Extension Integration
 - Email Phishing Detection
+- AI Security Assistant
 - Dark Web Monitoring
-- Mobile Application
+- Threat Hunting Module
 - SIEM Integration
 - Threat Intelligence API
+- Mobile Application Support
 
 ---
 
-## 📊 Project Impact
+# 📊 Skills Demonstrated
 
-✅ Phishing Website Detection
+### Cybersecurity
 
-✅ Threat Intelligence Integration
+- Threat Intelligence
+- Phishing Detection
+- Security Monitoring
+- Risk Assessment
 
-✅ Security Analytics Dashboard
+### Software Development
 
-✅ Machine Learning Classification
+- Frontend Development
+- Dashboard Design
+- REST API Integration
+- Data Visualization
 
-✅ Real-Time Monitoring
+### Machine Learning
 
----
-
-## 👨‍💻 Developer
-
-### Sudhanshu
-
-Computer Science Engineering Student
-
-Cybersecurity Enthusiast | Frontend Developer | Security Research Learner
-
-GitHub: https://github.com/heysudhuu
-
-LinkedIn: https://www.linkedin.com/in/heysudhu
+- Feature Engineering
+- Classification Models
+- Predictive Analysis
 
 ---
 
-## ⭐ Support
+# 👨‍💻 Author
 
-If you found this project useful, please consider giving it a ⭐ on GitHub.
+## Sudhanshu
+
+Computer Science Engineering Student  
+Cybersecurity Enthusiast | Security Research Learner | Frontend Developer
+
+### Connect With Me
+
+- GitHub: https://github.com/heysudhuu
+- LinkedIn: https://www.linkedin.com/in/heysudhu
 
 ---
 
-<p align="center">
-Made with ❤️ and Cybersecurity 🔐
-</p>
+# ⭐ Support The Project
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
+
+It helps others discover the project and supports future development.
+
+---
+
+<div align="center">
+
+### 🔐 Building a safer internet, one URL at a time.
+
+</div>
