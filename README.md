@@ -28,10 +28,8 @@ Designed as a modern Security Operations Center (SOC) inspired dashboard, PhishG
 
 ## 🖼️ Dashboard Preview
 
-> Replace the image path with your actual screenshot.
-
 ```html
-/assets/dashboard.png
+dashboard.png
 ```
 
 ![Dashboard Preview](dashboard.png)
